@@ -23,7 +23,7 @@ def health_check():
 @app.on_event("startup")
 def on_start():
     print("🔥 App started")
-    # create_db()   
+    create_db()   
 
 
 app.include_router(auth_router.router)
