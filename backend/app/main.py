@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import create_db
+from app.config import settings, Settings
 
 from app.routers import auth_router, user_router, chat_router, analytics_router
 
@@ -22,8 +23,23 @@ def health_check():
 
 @app.on_event("startup")
 def on_start():
-    print("🔥 App started")
-    create_db()   
+    print("🔥 FastAPI Startup Sequence Initiated")
+    try:
+        print("🔍 Loading settings...")
+        settings = Settings()
+        print("✅ Settings loaded successfully")
+    except Exception as e:
+        print(f"❌ Failed to load settings: {e}")
+        raise e
+    try:
+        print("🛠️ Creating Database tables...")
+        create_db()
+        print("✅ Database tables verified/created")
+    except Exception as e:
+        print(f"❌ Database Initialization Failed: {e}")
+        # We don't necessarily want to crash here if the DB is just slow to wake up
+        pass
+    print("🚀 App is ready to receive traffic")
 
 
 app.include_router(auth_router.router)
