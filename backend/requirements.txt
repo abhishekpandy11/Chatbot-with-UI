@@ -1,0 +1,11 @@
+fastapi 
+uvicorn 
+sqlmodel 
+passlib[argon2] 
+python-jose 
+python-dotenv
+qdrant-client
+groq
+sentence-transformers
+pydantic-settings
+psycopg2-binary
