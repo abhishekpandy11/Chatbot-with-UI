@@ -22,8 +22,9 @@ WORKDIR /app
 # Copy only the installed dependencies from the builder stage
 COPY --from=builder /install /usr/local
 
-# ✅ FIX 1: correct path (important for Railway)
-COPY backend/app ./app
+# ✅ FIX: Copy everything from backend folder into /app
+# This ensures /app/app exists and matches your internal imports (from app.x import y)
+COPY backend/ ./
 
 # Expose the port the app runs on
 EXPOSE 8000
@@ -32,5 +33,5 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# ✅ FIX 2: use shell form for $PORT (Railway compatibility)
+# ✅ START COMMAND: Ensure this matches the package name in your container
 CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
