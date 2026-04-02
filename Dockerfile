@@ -16,6 +16,6 @@ COPY backend/ ./
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# ✅ FIXED: Simple string CMD for best compatibility with Railway
-# This ensures $PORT is correctly mapped by the shell
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# ✅ FINAL FIX: Hardcode 8000 to avoid expansion errors. 
+# Railway will automatically detect this port.
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
