@@ -31,8 +31,10 @@ def on_start():
         settings = Settings()
         print("✅ Settings loaded successfully")
     except Exception as e:
-        print(f"❌ Failed to load settings: {e}")
-        raise e
+        print(f"❌ CRITICAL ERROR: Missing or Invalid Environment Variables!")
+        print(f"🔍 Error details: {e}")
+        # Not raising here temporarily so logs can be viewed easily
+        # but the app won't function without these.
     try:
         print("🛠️ Creating Database tables...")
         create_db()
