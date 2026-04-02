@@ -13,9 +13,13 @@ FROM python:3.11-slim
 WORKDIR /app
 COPY --from=builder /install /usr/local
 COPY backend/ ./
+COPY start.sh .
+
+# Permissions for script
+RUN chmod +x start.sh
+
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# ✅ FINAL FIX: Hardcode 8000 to avoid expansion errors. 
-# Railway will automatically detect this port.
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# ✅ USE START SCRIPT
+CMD ["./start.sh"]
