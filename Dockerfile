@@ -16,5 +16,6 @@ COPY backend/ ./
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# ✅ FORCE HOST 0.0.0.0 FOR EXTERNAL ACCESS
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# ✅ FIXED: Simple string CMD for best compatibility with Railway
+# This ensures $PORT is correctly mapped by the shell
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
