@@ -7,6 +7,8 @@ from app.routers import auth_router, user_router, chat_router, analytics_router
 
 app = FastAPI()
 
+print("🚀 LATEST CODE VERSION LOADED (March 2, 2026 14:15)")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
