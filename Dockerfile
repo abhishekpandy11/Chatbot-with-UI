@@ -13,6 +13,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir --prefix=/install -r requirements.txt
 
+
 # Stage 2: Runner
 FROM python:3.11-slim
 
@@ -21,9 +22,8 @@ WORKDIR /app
 # Copy only the installed dependencies from the builder stage
 COPY --from=builder /install /usr/local
 
-# Copy the application code
-# Assuming the build command is run from the backend directory
-COPY app ./app
+# ✅ FIX 1: correct path (important for Railway)
+COPY backend/app ./app
 
 # Expose the port the app runs on
 EXPOSE 8000
@@ -32,5 +32,5 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# Command to run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# ✅ FIX 2: use shell form for $PORT (Railway compatibility)
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
