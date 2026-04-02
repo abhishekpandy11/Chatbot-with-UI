@@ -1,11 +1,13 @@
 from sqlmodel import SQLModel, create_engine, Session
+from typing import Optional
 
-from app.config import settings
+# Engine is None until init_engine() is called during the startup event.
+engine = None
 
-engine = create_engine(
-    settings.DATABASE_URL,
-    echo=True
-)
+def init_engine(database_url: str):
+    """Create the SQLAlchemy engine. Called once at startup after settings are loaded."""
+    global engine
+    engine = create_engine(database_url, echo=True)
 
 # ✅ THIS WAS MISSING
 def create_db():

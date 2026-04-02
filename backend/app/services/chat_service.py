@@ -7,9 +7,16 @@ from app.database import engine
 from app.models.chat import Conversation, Message
 from app.models.analytics import UsageLog
 
-from app.config import settings
+from app.config import get_settings
 
-client = Groq(api_key=settings.GROQ_API_KEY, timeout=30.0)
+# Client is None until init_groq_client() is called during the startup event.
+client = None
+
+def init_groq_client():
+    """Instantiate the Groq client. Called once at startup after settings are loaded."""
+    global client
+    client = Groq(api_key=get_settings().GROQ_API_KEY, timeout=30.0)
+
 async def chat_with_rag(query: str):
     # Keeping this for legacy compatibility if needed
     try:

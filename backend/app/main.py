@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import create_db
-from app.config import settings, Settings
+from app.config import init_settings
+from app.database import init_engine, create_db
+from app.services.chat_service import init_groq_client
 
 from app.routers import auth_router, user_router, chat_router, analytics_router
 
@@ -26,23 +27,46 @@ def health_check():
 @app.on_event("startup")
 def on_start():
     print("🔥 FastAPI Startup Sequence Initiated")
+
+    # 1. Load settings — single point of initialisation.
+    #    Any missing/invalid env vars will raise here with a clear message.
     try:
         print("🔍 Loading settings...")
-        settings = Settings()
+        settings = init_settings()
         print("✅ Settings loaded successfully")
     except Exception as e:
         print(f"❌ CRITICAL ERROR: Missing or Invalid Environment Variables!")
         print(f"🔍 Error details: {e}")
-        # Not raising here temporarily so logs can be viewed easily
-        # but the app won't function without these.
+        raise  # Re-raise so the process exits — the app cannot run without settings.
+
+    # 2. Initialise the database engine now that DATABASE_URL is available.
+    try:
+        print("🛠️ Initialising database engine...")
+        init_engine(settings.DATABASE_URL)
+        print("✅ Database engine initialised")
+    except Exception as e:
+        print(f"❌ Database Engine Initialisation Failed: {e}")
+        raise
+
+    # 3. Create tables.
     try:
         print("🛠️ Creating Database tables...")
         create_db()
         print("✅ Database tables verified/created")
     except Exception as e:
-        print(f"❌ Database Initialization Failed: {e}")
-        # We don't necessarily want to crash here if the DB is just slow to wake up
+        print(f"❌ Database Table Creation Failed: {e}")
+        # Non-fatal — tables may already exist or DB may be slow to wake up.
         pass
+
+    # 4. Initialise the Groq client now that GROQ_API_KEY is available.
+    try:
+        print("🔍 Initialising Groq client...")
+        init_groq_client()
+        print("✅ Groq client initialised")
+    except Exception as e:
+        print(f"❌ Groq Client Initialisation Failed: {e}")
+        raise
+
     print("🚀 App is ready to receive traffic")
 
 
@@ -55,4 +79,4 @@ if __name__ == "__main__":
     import uvicorn
     import os
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=port)
