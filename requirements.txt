@@ -10,5 +10,4 @@ pydantic-settings
 psycopg2-binary
 pydantic[email]
 uvicorn[standard]
-sentence-transformers
-torch --index-url https://download.pytorch.org/whl/cpu
+httpx

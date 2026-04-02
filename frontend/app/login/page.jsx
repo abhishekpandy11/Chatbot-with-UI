@@ -42,7 +42,7 @@ export default function Login() {
         <BackgroundGradient>
             <SpotlightCard
                 title="Welcome Back"
-                subtitle="Sign in to your account"
+                subtitle="Login to your account"
                 className="max-w-md w-full"
             >
                 {errors.general && (
@@ -73,10 +73,10 @@ export default function Login() {
                         {loading ? (
                             <div className="flex items-center justify-center">
                                 <LoadingSpinner size="sm" className="mr-2" />
-                                Signing in...
+                                Logging in...
                             </div>
                         ) : (
-                            "Sign In"
+                            "Login"
                         )}
                     </AceternityButton>
                 </form>
